@@ -1,0 +1,8 @@
+#blitzmart/src/main/resources/application.yml
+spring:
+  profiles:
+    active: '@spring.profiles.active@'
+
+application:
+  title: Blitzmart
+  version: 1.0
