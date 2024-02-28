@@ -7,6 +7,7 @@ import cc.kfy.blitzmart.form.LoginForm;
 import cc.kfy.blitzmart.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -26,6 +27,7 @@ import static org.springframework.http.HttpStatus.OK;
 @RestController
 @RequestMapping(path = "/user")
 @RequiredArgsConstructor
+@Slf4j
 public class UserResource {
     private final UserService userService;
     private final AuthenticationManager authenticationManager;

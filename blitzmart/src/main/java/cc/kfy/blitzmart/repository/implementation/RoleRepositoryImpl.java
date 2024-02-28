@@ -13,8 +13,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Collection;
 
 import static cc.kfy.blitzmart.enumeration.RoleType.ROLE_USER;
-import static cc.kfy.blitzmart.query.RoleQuery.INSERT_ROLE_TO_USER_QUERY;
-import static cc.kfy.blitzmart.query.RoleQuery.SELECT_ROLE_BY_NAME_QUERY;
+import static cc.kfy.blitzmart.query.RoleQuery.*;
 import static java.util.Map.of;
 import static java.util.Objects.requireNonNull;
 
@@ -59,13 +58,24 @@ public class RoleRepositoryImpl implements RoleRepository<Role> {
         } catch (EmptyResultDataAccessException exception) {
             throw new ApiException("No role found by name: " + ROLE_USER.name());
         } catch (Exception exception) {
+            log.error(exception.getMessage());
             throw new ApiException("An error occurred. Please try again.");
         }
     }
 
     @Override
     public Role getRoleByUserId(Long userId) {
-        return null;
+        log.info("Find role for user id: {}", userId);
+        try {
+            // Find role in the database
+            Role role = jdbc.queryForObject(SELECT_ROLE_BY_ID_QUERY, of("id", userId), new RoleRowMapper());
+            return role;
+        } catch (EmptyResultDataAccessException exception) {
+            throw new ApiException("No role found by name: " + ROLE_USER.name());
+        } catch (Exception exception) {
+            log.error(exception.getMessage());
+            throw new ApiException("An error occurred. Please try again.");
+        }
     }
 
     @Override
