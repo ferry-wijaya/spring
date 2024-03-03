@@ -1,10 +1,17 @@
 package cc.kfy.blitzmart.dto;
 
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-@Data
+//@Data
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserDTO {
     private Long id;
     private String firstName;
@@ -19,4 +26,6 @@ public class UserDTO {
     private boolean isNotLocked;
     private boolean isUsingMfa;
     private LocalDateTime createdAt;
+    private String roleName;
+    private String permissions;
 }
