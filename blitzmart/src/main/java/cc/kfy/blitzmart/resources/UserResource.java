@@ -11,7 +11,6 @@ import cc.kfy.blitzmart.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
@@ -29,7 +28,6 @@ import static org.springframework.web.servlet.support.ServletUriComponentsBuilde
 @RestController
 @RequestMapping(path = "/user")
 @RequiredArgsConstructor
-@Slf4j
 public class UserResource {
 	private final UserService userService;
 	private final RoleService roleService;
@@ -38,10 +36,8 @@ public class UserResource {
 
 	@PostMapping("/login")
 	public ResponseEntity<HttpResponse> login(@RequestBody @Valid LoginForm loginForm) {
-		//authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginForm.getEmail(), loginForm.getPassword()));
 		authenticationManager.authenticate(unauthenticated(loginForm.getEmail(), loginForm.getPassword()));
 		UserDTO userDTO = userService.getUserByEmail(loginForm.getEmail());
-		//return sendResponse(userDTO);
 		return userDTO.isUsingMfa() ? sendVerificationCode(userDTO) : sendResponse(userDTO);
 	}
 
@@ -88,7 +84,7 @@ public class UserResource {
 										.build());
 	}
 
-	@RequestMapping("/error")
+	@RequestMapping(value ="/error")
 	public ResponseEntity<HttpResponse> handleError(HttpServletRequest request) {
 		return ResponseEntity.badRequest().body(
 						HttpResponse.builder()

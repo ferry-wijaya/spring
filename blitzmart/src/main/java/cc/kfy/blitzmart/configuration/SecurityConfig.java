@@ -39,25 +39,21 @@ public class SecurityConfig {
 	private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 	private final UserDetailsService userDetailsService;
 	private final CustomAuthorizationFilter customAuthorizationFilter;
-	//private static final String[] PUBLIC_URLS = {"/user/login/**", "/user/register/**", "/user/verify/code/**"};
+	// private static final String[] PUBLIC_URLS = {"/user/login/**", "/user/register/**", "/user/verify/code/**"};
 	private static final String[] PUBLIC_URLS = {"/**"};
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		http
-						.csrf(AbstractHttpConfigurer::disable)
-						//.cors(configure -> configure.configurationSource(corsConfigurationSource()))
-						.cors(AbstractHttpConfigurer::disable)
-						.sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-						.exceptionHandling(ex ->
-										ex.accessDeniedHandler(customAccessDeniedHandler)
-														.authenticationEntryPoint(customAuthenticationEntryPoint))
-						.authorizeHttpRequests(request ->
-										request.requestMatchers(PUBLIC_URLS).permitAll()
-														.requestMatchers(HttpMethod.DELETE, "/user/delete/**").hasAnyAuthority("DELETE:USER")
-														.requestMatchers(HttpMethod.DELETE, "/customer/delete/**").hasAnyAuthority("DELETE:CUSTOMER")
-														.anyRequest().authenticated()
-						);
+		http.csrf(AbstractHttpConfigurer::disable);
+		// http.cors(AbstractHttpConfigurer::disable);
+		// http.cors(c -> c.configurationSource(corsConfigurationSource()));
+		http.sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+		http.exceptionHandling(e -> e.accessDeniedHandler(customAccessDeniedHandler));
+		http.exceptionHandling(e -> e.authenticationEntryPoint(customAuthenticationEntryPoint));
+		http.authorizeHttpRequests(r -> r.requestMatchers(PUBLIC_URLS).permitAll());
+		http.authorizeHttpRequests(r -> r.requestMatchers(HttpMethod.DELETE, "/user/delete/**").hasAnyAuthority("DELETE:USER"));
+		http.authorizeHttpRequests(r -> r.requestMatchers(HttpMethod.DELETE, "/customer/delete/**").hasAnyAuthority("DELETE:CUSTOMER"));
+		http.authorizeHttpRequests(r -> r.anyRequest().authenticated());
 		//http.addFilterBefore(customAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);
 		return http.build();
 	}

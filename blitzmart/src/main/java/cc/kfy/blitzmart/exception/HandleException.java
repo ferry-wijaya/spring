@@ -8,17 +8,14 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.nio.file.AccessDeniedException;
 import java.sql.SQLIntegrityConstraintViolationException;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.time.LocalDateTime.now;
 import static org.springframework.http.HttpStatus.*;
@@ -40,20 +37,46 @@ public class HandleException extends ResponseEntityExceptionHandler implements E
 		//return super.handleExceptionInternal(ex, body, headers, statusCode, request);
 	}
 
+//	@Override
+//	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException exception, HttpHeaders headers, HttpStatusCode statusCode, WebRequest request) {
+//		log.error(exception.getMessage());
+//		List<FieldError> fieldErrors = exception.getBindingResult().getFieldErrors();
+//		String fieldMessage = fieldErrors.stream().map(FieldError::getDefaultMessage).collect(Collectors.joining(", "));
+//		return new ResponseEntity<>(
+//						HttpResponse.builder()
+//										.timeStamp(now().toString())
+//										.reason(fieldMessage)
+//										.developerMessage(exception.getMessage())
+//										.status(resolve(statusCode.value()))
+//										.statusCode(statusCode.value())
+//										.build(), statusCode);
+////		return super.handleMethodArgumentNotValid(ex, headers, status, request);
+//	}
+//
+//	@Override
+//	protected ResponseEntity<Object> handleNoHandlerFoundException(NoHandlerFoundException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+//		log.error(ex.getMessage());
+//		return new ResponseEntity<>(
+//						HttpResponse.builder()
+//										.timeStamp(now().toString())
+//										.reason(ex.getMessage())
+//										.developerMessage(ex.getMessage())
+//										.status(resolve(status.value()))
+//										.statusCode(status.value())
+//										.build(), status);
+//	}
+
 	@Override
-	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException exception, HttpHeaders headers, HttpStatusCode statusCode, WebRequest request) {
-		log.error(exception.getMessage());
-		List<FieldError> fieldErrors = exception.getBindingResult().getFieldErrors();
-		String fieldMessage = fieldErrors.stream().map(FieldError::getDefaultMessage).collect(Collectors.joining(", "));
+	protected ResponseEntity<Object> handleNoResourceFoundException(NoResourceFoundException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+		log.error(ex.getMessage());
 		return new ResponseEntity<>(
 						HttpResponse.builder()
 										.timeStamp(now().toString())
-										.reason(fieldMessage)
-										.developerMessage(exception.getMessage())
-										.status(resolve(statusCode.value()))
-										.statusCode(statusCode.value())
-										.build(), statusCode);
-//		return super.handleMethodArgumentNotValid(ex, headers, status, request);
+										.reason(ex.getMessage())
+										.developerMessage(ex.getMessage())
+										.status(resolve(status.value()))
+										.statusCode(status.value())
+										.build(), status);
 	}
 
 	@ExceptionHandler(SQLIntegrityConstraintViolationException.class)
